@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import { Filters } from './Filters';
+import { fetch } from './../utils/httpUtils';
 import { MissionCard } from './launchCard';
 interface LauncherHomeProps {
   missions: any;
@@ -41,15 +42,25 @@ const styles = `
 
 export const Home: FunctionComponent<LauncherHomeProps> = (props) => {
   const [ missions, setMissions ] = useState(props.missions);
+  const [ launchYear, setLaunchYear ] = useState('2006');
+  const [ launchSuccess, setLaunchSuccess ] = useState(true);
+  const [ landSuccess, setLandSuccess ] = useState(true);
   console.log(missions);
+  const updateMissions = () => {
+    const url = `https://api.spacexdata.com/v3/launches?limit=100&launch_success=${launchSuccess}&land_success=${landSuccess}&launch_year=${launchYear}`;
+    fetch(url).then((response) => setMissions(response));
+  }
   const handleYearClick = (year: string) => {
-    console.log(year);
+    setLaunchYear(year);
+    updateMissions();
   }
   const handleSuccessLaunchClick = (success: boolean) => {
-    console.log(success);
+    setLaunchSuccess(success);
+    updateMissions();
   }
   const handleSuccessLandingClick = (success: boolean) => {
-    console.log(success);
+    setLandSuccess(success);
+    updateMissions();
   }
   return <div>
     <h1>SpaceX Launch Programs</h1>
